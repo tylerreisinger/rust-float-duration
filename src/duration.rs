@@ -170,7 +170,12 @@ impl FloatDuration {
 
 #[cfg(feature = "chrono")]
 impl FloatDuration {
-    pub fn to_chrono_duration(&self) -> error::Result<chrono::Duration> {
+    /// Create a `chrono::Duration` object from a `FloatDuration`.
+    ///
+    /// # Errors
+    /// Presently, the conversion to `chrono::Duration` first goes through
+    /// `std::time::Duration` and return an error if `to_std` returns an error.
+    pub fn to_chrono(&self) -> error::Result<chrono::Duration> {
         let is_negative = self.is_negative();
         let std_duration = self.abs().to_std()?;
         let chrono_duration = chrono::Duration::from_std(std_duration)?;
@@ -181,20 +186,17 @@ impl FloatDuration {
         }
     }
 
-    pub fn from_chrono_duration(duration: &chrono::Duration) -> error::Result<FloatDuration> {
-        let is_negative = duration.num_seconds() < 0;
-
-        let std_duration = if is_negative {
-            (-*duration).to_std()?
+    /// Create a `FloatDuration` object from a `chrono::Duration`.
+    ///
+    /// `chrono::Duration` does not provide a way to access sub-millisecond
+    /// precision if the duration is too large to be entirely represented as a single
+    /// value. Thus, if the absolute value of the total number of nanoseconds is
+    /// greater than `i64::MAX`, only millisecond precision will be captured.
+    pub fn from_chrono(duration: &chrono::Duration) -> FloatDuration {
+        if let Some(nanos) = duration.num_nanoseconds() {
+            FloatDuration::nanoseconds(nanos as f64)
         } else {
-            duration.to_std()?
-        };
-
-        let float_duration = FloatDuration::from_std(std_duration);
-        if is_negative {
-            Ok(-float_duration)
-        } else {
-            Ok(float_duration)
+            FloatDuration::milliseconds(duration.num_milliseconds() as f64)
         }
     }
 }
@@ -203,7 +205,7 @@ impl FloatDuration {
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> error::Result<FloatDuration> {
         let chrono_duration = self.signed_duration_since(since);
-        FloatDuration::from_chrono_duration(&chrono_duration)
+        Ok(FloatDuration::from_chrono(&chrono_duration))
     }
 }
 impl TimePoint for time::Instant {
@@ -433,5 +435,31 @@ mod tests {
         assert_eq!(format!("{}", FloatDuration::nanoseconds(25.25)),
                    "25.25 nanoseconds");
         assert_eq!(format!("{}", FloatDuration::minutes(90.0)), "1.5 hours");
+    }
+
+    #[cfg(feature = "chrono")]
+    #[test]
+    fn test_chrono_conversion() {
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::minutes(10)),
+                   FloatDuration::minutes(10.0));
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::hours(72)),
+                   FloatDuration::days(3.0));
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::nanoseconds(500)),
+                   FloatDuration::nanoseconds(500.0));
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::microseconds(-20000)),
+                   FloatDuration::milliseconds(-20.0));
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::zero()),
+                   FloatDuration::zero());
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::hours(10000)),
+                   FloatDuration::hours(10000.0));
+
+        assert_eq!(FloatDuration::minutes(2.5).to_chrono().unwrap(),
+                   chrono::Duration::seconds(150));
+        assert_eq!(FloatDuration::milliseconds(250.050).to_chrono().unwrap(),
+                   chrono::Duration::microseconds(250050));
+        assert!(FloatDuration::max_value().to_chrono().is_err());
+        assert_eq!(FloatDuration::nanoseconds(-20.0).to_chrono().unwrap(),
+                   chrono::Duration::nanoseconds(-20));
+
     }
 }
