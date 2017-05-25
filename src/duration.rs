@@ -33,8 +33,10 @@ pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
 /// Types implementing `TimePoint` can have a `FloatDuration` computed between them
 /// via `float_duration_since` in either direction.
 pub trait TimePoint<Rhs = Self> {
+    /// The type returned if there is an error computing the duration.
+    type Err;
     /// The amount of time between two `TimePoint`s.
-    fn float_duration_since(self, rhs: Rhs) -> error::Result<FloatDuration>;
+    fn float_duration_since(self, rhs: Rhs) -> Result<FloatDuration, Self::Err>;
 }
 
 /// A time duration stored as a floating point quantity.
@@ -205,18 +207,21 @@ impl FloatDuration {
 
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
+    type Err = DurationError;
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> error::Result<FloatDuration> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
     }
 }
 impl TimePoint for time::Instant {
+    type Err = DurationError;
     fn float_duration_since(self, since: time::Instant) -> error::Result<FloatDuration> {
         let std_duration = self.duration_since(since);
         Ok(FloatDuration::from_std(std_duration))
     }
 }
 impl TimePoint for time::SystemTime {
+    type Err = DurationError;
     fn float_duration_since(self, since: time::SystemTime) -> error::Result<FloatDuration> {
         let std_duration = self.duration_since(since)?;
         Ok(FloatDuration::from_std(std_duration))
