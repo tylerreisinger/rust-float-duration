@@ -160,7 +160,6 @@ impl FloatDuration {
         FloatDuration::seconds((duration.as_secs() as f64) +
                                (duration.subsec_nanos() as f64) * 1.0e-9)
     }
-
 }
 
 #[cfg(feature = "chrono")]
@@ -410,21 +409,23 @@ mod tests {
 
     #[test]
     fn test_display() {
-        use std::fmt::Write;
+        assert_eq!(format!("{}", FloatDuration::minutes(3.5)), "3.5 minutes");
+        assert_eq!(format!("{}", FloatDuration::days(3.0) + FloatDuration::hours(12.0)),
+                   "3.5 days");
 
-        let mut buffer1 = "".to_string();
-        let duration1 = FloatDuration::minutes(3.5);
-        write!(buffer1, "{}", duration1).unwrap();
-        assert_eq!(buffer1, "3.5 minutes");
+        assert_eq!(format!("{}", FloatDuration::microseconds(100.0)),
+                   "100 microseconds");
+        assert_eq!(format!("{}", FloatDuration::milliseconds(12.5)),
+                   "12.5 milliseconds");
 
-        let mut buffer2 = "".to_string();
-        let duration2 = FloatDuration::days(3.0) + FloatDuration::hours(12.0);
-        write!(buffer2, "{}", duration2).unwrap();
-        assert_eq!(buffer2, "3.5 days");
+        assert_eq!(format!("{}", FloatDuration::days(365.0) + FloatDuration::hours(6.0)),
+                   "365.25 days");
+        assert_eq!(format!("{}",
+                           FloatDuration::milliseconds(50.0) + FloatDuration::microseconds(500.0)),
+                   "50.5 milliseconds");
 
-        let mut buffer3 = "".to_string();
-        let duration3 = FloatDuration::microseconds(100.0);
-        write!(buffer3, "{}", duration3).unwrap();
-        assert_eq!(buffer3, "100 microseconds");
+        assert_eq!(format!("{}", FloatDuration::nanoseconds(25.25)),
+                   "25.25 nanoseconds");
+        assert_eq!(format!("{}", FloatDuration::minutes(90.0)), "1.5 hours");
     }
 }
