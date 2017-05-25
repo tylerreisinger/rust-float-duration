@@ -2,11 +2,20 @@
 name = "float_duration"
 version = "0.1.0"
 authors = ["Tyler Reisinger <reisinger.tyler@gmail.com>"]
-keywords = ["time", "duration", "float", "simulation"]
+
 description = """
+Floating-point Duration support.
+
+Provides quantification for spans of time. Unlike the standard std::time or the chrono crate, this crate aims to provide a fully featured Duration type which exposes and uses floating-point values instead of integer ones.
 """
+
 license = "MIT"
 readme = "README.md"
+documentation = "https://docs.rs/float_duration"
+homepage = "https://github.com/tylerreisinger/rust-float-duration"
+repository = "https://github.com/tylerreisinger/rust-float-duration"
+
+keywords = ["time", "duration", "float", "simulation"]
 
 [lib]
 name = "float_duration"
@@ -18,4 +27,4 @@ time = { version = "0.1.37", optional = true }
 approx = { version = "0.1.1", optional = true }
 
 [features]
-default = ["chrono", "time", "approx"]
+default = []
