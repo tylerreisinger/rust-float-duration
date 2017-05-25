@@ -3,6 +3,7 @@ use std::result;
 use std::error::Error;
 use std::fmt;
 
+#[cfg(feature = "chrono")]
 use time;
 
 #[derive(Debug, Clone)]
@@ -30,6 +31,7 @@ impl Error for DurationError {
     }
 }
 
+#[cfg(feature = "chrono")]
 impl From<time::OutOfRangeError> for DurationError {
     fn from(_: time::OutOfRangeError) -> DurationError {
         DurationError::StdOutOfRange

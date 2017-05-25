@@ -4,6 +4,7 @@ use std::ops;
 use std::f64;
 use std::u64;
 
+#[cfg(feature = "chrono")]
 use chrono;
 
 use super::error;
@@ -212,6 +213,7 @@ impl FloatDuration {
     }
 }
 
+#[cfg(feature = "chrono")]
 impl FloatDuration {
     pub fn as_chrono_duration(&self) -> error::Result<chrono::Duration> {
         let is_negative = self.is_negative();
@@ -276,6 +278,7 @@ impl DecomposedTime {
     }
 }
 
+#[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> error::Result<FloatDuration> {
         let chrono_duration = self.signed_duration_since(since);
