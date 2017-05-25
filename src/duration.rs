@@ -146,7 +146,7 @@ impl FloatDuration {
     /// greater than `std::u64::MAX`. This function will return a
     /// `DurationError::StdOutOfRange` if the `FloatDuration` value is outside
     /// of either of those bounds.
-    pub fn as_std(&self) -> error::Result<time::Duration> {
+    pub fn to_std(&self) -> error::Result<time::Duration> {
         if self.secs.is_sign_negative() {
             Err(DurationError::StdOutOfRange)
         } else {
@@ -170,9 +170,9 @@ impl FloatDuration {
 
 #[cfg(feature = "chrono")]
 impl FloatDuration {
-    pub fn as_chrono_duration(&self) -> error::Result<chrono::Duration> {
+    pub fn to_chrono_duration(&self) -> error::Result<chrono::Duration> {
         let is_negative = self.is_negative();
-        let std_duration = self.abs().as_std()?;
+        let std_duration = self.abs().to_std()?;
         let chrono_duration = chrono::Duration::from_std(std_duration)?;
         if is_negative {
             Ok(-chrono_duration)
@@ -390,22 +390,22 @@ mod tests {
     #[test]
     fn test_std_conversion() {
         let duration1 = FloatDuration::minutes(5.0);
-        let std_duration1 = duration1.as_std().unwrap();
+        let std_duration1 = duration1.to_std().unwrap();
         assert!(duration1.is_positive());
         assert_eq!(std_duration1, time::Duration::new(300, 0));
         assert_eq!(FloatDuration::from_std(std_duration1), duration1);
 
         let duration2 = FloatDuration::hours(-2.0);
         assert!(duration2.is_negative());
-        assert!(!duration2.as_std().is_ok());
-        let std_duration2 = (-duration2).as_std().unwrap();
+        assert!(!duration2.to_std().is_ok());
+        let std_duration2 = (-duration2).to_std().unwrap();
         assert_eq!(std_duration2, time::Duration::new(3600 * 2, 0));
         assert_eq!(FloatDuration::from_std(std_duration2), -duration2);
 
-        assert_eq!(FloatDuration::zero().as_std().unwrap(),
+        assert_eq!(FloatDuration::zero().to_std().unwrap(),
                    time::Duration::new(0, 0));
-        assert!(FloatDuration::nanoseconds(-1.0).as_std().is_err());
-        assert!(FloatDuration::max_value().as_std().is_err());
+        assert!(FloatDuration::nanoseconds(-1.0).to_std().is_err());
+        assert!(FloatDuration::max_value().to_std().is_err());
 
         assert_eq!(FloatDuration::from_std(time::Duration::new(0, 1)),
                    FloatDuration::nanoseconds(1.0));
