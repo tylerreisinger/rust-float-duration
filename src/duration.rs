@@ -488,6 +488,8 @@ mod tests {
         assert_eq!(format!("{}", FloatDuration::minutes(3.5)), "3.5 minutes");
         assert_eq!(format!("{}", FloatDuration::days(3.0) + FloatDuration::hours(12.0)),
                    "3.5 days");
+        assert_eq!(format!("{}", FloatDuration::seconds(12.7)), "12.7 seconds");
+        assert_eq!(format!("{}", FloatDuration::default()), "0 nanoseconds");
 
         assert_eq!(format!("{}", FloatDuration::microseconds(100.0)),
                    "100 microseconds");
@@ -520,6 +522,8 @@ mod tests {
                    FloatDuration::zero());
         assert_eq!(FloatDuration::from_chrono(&chrono::Duration::hours(10000)),
                    FloatDuration::hours(10000.0));
+        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::milliseconds(1i64 << 62)),
+                   FloatDuration::milliseconds((1i64 << 62) as f64));
 
         assert_eq!(FloatDuration::minutes(2.5).to_chrono().unwrap(),
                    chrono::Duration::seconds(150));
