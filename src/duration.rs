@@ -1,3 +1,4 @@
+//! Floating-point duration type `FloatDuration` and helpers.
 use std::time;
 use std::fmt;
 use std::ops;
