@@ -133,3 +133,4 @@ pub mod duration;
 pub mod error;
 
 pub use duration::{FloatDuration, TimePoint};
+pub use error::OutOfRangeError;

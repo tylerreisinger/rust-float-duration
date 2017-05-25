@@ -11,7 +11,6 @@ use chrono;
 use approx::ApproxEq;
 
 use super::error;
-use super::error::DurationError;
 
 /// Number of nanoseconds in a second.
 pub const NANOS_PER_SEC: f64 = 1.0e9;
@@ -151,15 +150,15 @@ impl FloatDuration {
     /// greater than `std::u64::MAX`. This function will return a
     /// `DurationError::StdOutOfRange` if the `FloatDuration` value is outside
     /// of either of those bounds.
-    pub fn to_std(&self) -> error::Result<time::Duration> {
+    pub fn to_std(&self) -> Result<time::Duration, error::OutOfRangeError> {
         if self.secs.is_sign_negative() {
-            Err(DurationError::StdOutOfRange)
+            Err(error::OutOfRangeError::new())
         } else {
             let seconds = self.secs.trunc();
             let nanos = self.secs.fract() * NANOS_PER_SEC;
 
             if seconds > u64::MAX as f64 {
-                Err(DurationError::StdOutOfRange)
+                Err(error::OutOfRangeError::new())
             } else {
                 Ok(time::Duration::new(seconds as u64, nanos as u32))
             }
@@ -180,7 +179,7 @@ impl FloatDuration {
     /// # Errors
     /// Presently, the conversion to `chrono::Duration` first goes through
     /// `std::time::Duration` and return an error if `to_std` returns an error.
-    pub fn to_chrono(&self) -> error::Result<chrono::Duration> {
+    pub fn to_chrono(&self) -> Result<chrono::Duration, error::OutOfRangeError> {
         let is_negative = self.is_negative();
         let std_duration = self.abs().to_std()?;
         let chrono_duration = chrono::Duration::from_std(std_duration)?;
@@ -255,8 +254,10 @@ impl TimePoint for time::Instant {
     }
 }
 impl TimePoint for time::SystemTime {
-    type Err = DurationError;
-    fn float_duration_since(self, since: time::SystemTime) -> error::Result<FloatDuration> {
+    type Err = time::SystemTimeError;
+    fn float_duration_since(self,
+                            since: time::SystemTime)
+                            -> Result<FloatDuration, time::SystemTimeError> {
         let std_duration = self.duration_since(since)?;
         Ok(FloatDuration::from_std(std_duration))
     }
