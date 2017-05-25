@@ -16,6 +16,7 @@ homepage = "https://github.com/tylerreisinger/rust-float-duration"
 repository = "https://github.com/tylerreisinger/rust-float-duration"
 
 keywords = ["time", "duration", "float", "simulation"]
+categories = ["date-and-time"]
 
 [lib]
 name = "float_duration"

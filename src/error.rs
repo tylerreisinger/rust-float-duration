@@ -1,3 +1,4 @@
+//! Error handling facilities.
 use std::error::Error;
 use std::fmt;
 
