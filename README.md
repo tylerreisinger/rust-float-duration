@@ -1,5 +1,9 @@
-float_duration
+[float_duration](https://docs.rs/float_duration) 0.1.0
 ======================
+[![float_duration on docs.rs][docsrs-image]][docsrs]
+
+[docsrs-image]: https://docs.rs/float_duration/badge.svg?version=0.1.0
+[docsrs]: https://docs.rs/float_duration/0.1.0/
 
 Temporal quantification using floating-point quantities.
 
