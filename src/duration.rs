@@ -6,6 +6,8 @@ use std::u64;
 
 #[cfg(feature = "chrono")]
 use chrono;
+#[cfg(feature = "approx")]
+use approx::ApproxEq;
 
 use super::error;
 use super::error::DurationError;
@@ -317,6 +319,32 @@ impl ops::DivAssign<f64> for FloatDuration {
 impl Default for FloatDuration {
     fn default() -> FloatDuration {
         FloatDuration::zero()
+    }
+}
+
+#[cfg(feature = "approx")]
+impl ApproxEq for FloatDuration {
+    type Epsilon = f64;
+
+    #[inline]
+    fn default_epsilon() -> f64 {
+        f64::default_epsilon()
+    }
+    #[inline]
+    fn default_max_relative() -> f64 {
+        f64::default_max_relative()
+    }
+    #[inline]
+    fn default_max_ulps() -> u32 {
+        f64::default_max_ulps()
+    }
+    #[inline]
+    fn relative_eq(&self, other: &FloatDuration, epsilon: f64, max_relative: f64) -> bool {
+        self.secs.relative_eq(&other.secs, epsilon, max_relative)
+    }
+    #[inline]
+    fn ulps_eq(&self, other: &FloatDuration, epsilon: f64, max_ulps: u32) -> bool {
+        self.secs.ulps_eq(&other.secs, epsilon, max_ulps)
     }
 }
 
