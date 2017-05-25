@@ -39,7 +39,6 @@ methods to create and read the value in various units, as well as `impl`s for ma
 arithmetic operators in `std::ops`.
 
 ```rust
-# use float_duration::*;
 let timespan = FloatDuration::hours(2.5) + FloatDuration::seconds(30.0);
 assert_eq!(timespan, FloatDuration::seconds(9030.0));
 assert_eq!(timespan, FloatDuration::minutes(150.5));
