@@ -10,6 +10,12 @@ use chrono;
 use super::error;
 use super::error::DurationError;
 
+/// Number of nanoseconds in a second.
+pub const NANOS_PER_SEC: f64 = 1.0e9;
+/// Number of microseconds in a second.
+pub const MICROS_PER_SEC: f64 = 1.0e6;
+/// Number of milliseconds in a second.
+pub const MILLIS_PER_SEC: f64 = 1.0e3;
 /// Number of seconds in a minute.
 pub const SECS_PER_MINUTE: f64 = 60.0;
 /// Number of seconds in an hour.
@@ -47,15 +53,15 @@ pub struct FloatDuration {
 impl FloatDuration {
     /// Create a new `FloatDuration` representing a number of days.
     pub fn days(days: f64) -> FloatDuration {
-        FloatDuration { secs: days * (3600.0 * 24.0) }
+        FloatDuration { secs: days * SECS_PER_DAY }
     }
     /// Create a new `FloatDuration` representing a number of hours.
     pub fn hours(hours: f64) -> FloatDuration {
-        FloatDuration { secs: hours * 3600.0 }
+        FloatDuration { secs: hours * SECS_PER_HOUR }
     }
     /// Create a new `FloatDuration` representing a number of minutes.
     pub fn minutes(mins: f64) -> FloatDuration {
-        FloatDuration { secs: mins * 60.0 }
+        FloatDuration { secs: mins * SECS_PER_MINUTE }
     }
     /// Create a new `FloatDuration` representing a number of seconds.
     pub fn seconds(secs: f64) -> FloatDuration {
@@ -63,15 +69,15 @@ impl FloatDuration {
     }
     /// Create a new `FloatDuration` representing a number of milliseconds.
     pub fn milliseconds(millis: f64) -> FloatDuration {
-        FloatDuration { secs: millis / 1000.0 }
+        FloatDuration { secs: millis / MILLIS_PER_SEC }
     }
     /// Create a new `FloatDuration` representing a number of microseconds.
     pub fn microseconds(micros: f64) -> FloatDuration {
-        FloatDuration { secs: micros / 1.0e6 }
+        FloatDuration { secs: micros / MICROS_PER_SEC }
     }
     /// Create a new `FloatDuration` representing a number of nanoseconds.
     pub fn nanoseconds(nanos: f64) -> FloatDuration {
-        FloatDuration { secs: nanos / 1.0e9 }
+        FloatDuration { secs: nanos / NANOS_PER_SEC }
     }
 
     /// Return the total number of fractional days represented by the `FloatDuration`.
@@ -92,15 +98,15 @@ impl FloatDuration {
     }
     /// Return the total number of fractional milliseconds represented by the `FloatDuration`.
     pub fn as_milliseconds(&self) -> f64 {
-        self.secs * 1.0e3
+        self.secs * MILLIS_PER_SEC
     }
     /// Return the total number of fractional microseconds represented by the `FloatDuration`.
     pub fn as_microseconds(&self) -> f64 {
-        self.secs * 1.0e6
+        self.secs * MICROS_PER_SEC
     }
     /// Return the total number of fractional nanoseconds represented by the `FloatDuration`.
     pub fn as_nanoseconds(&self) -> f64 {
-        self.secs * 1.0e9
+        self.secs * NANOS_PER_SEC
     }
 
     /// Compute the absolute value of this duration.
@@ -145,7 +151,7 @@ impl FloatDuration {
             Err(DurationError::StdOutOfRange)
         } else {
             let seconds = self.secs.trunc();
-            let nanos = self.secs.fract() * 1e9;
+            let nanos = self.secs.fract() * NANOS_PER_SEC;
 
             if seconds > u64::MAX as f64 {
                 Err(DurationError::StdOutOfRange)
@@ -158,7 +164,7 @@ impl FloatDuration {
     /// Create a `FloatDuration` object from a `std::time::Duration`.
     pub fn from_std(duration: time::Duration) -> FloatDuration {
         FloatDuration::seconds((duration.as_secs() as f64) +
-                               (duration.subsec_nanos() as f64) * 1.0e-9)
+                               (duration.subsec_nanos() as f64) / NANOS_PER_SEC)
     }
 }
 
