@@ -208,15 +208,48 @@ impl FloatDuration {
 
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
-    type Err = DurationError;
-    fn float_duration_since(self, since: chrono::DateTime<Tz>) -> error::Result<FloatDuration> {
+    type Err = ();
+    fn float_duration_since(self, since: chrono::DateTime<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
     }
 }
+#[cfg(feature = "chrono")]
+impl<Tz: chrono::TimeZone> TimePoint for chrono::Date<Tz> {
+    type Err = ();
+    fn float_duration_since(self, since: chrono::Date<Tz>) -> Result<FloatDuration, ()> {
+        let chrono_duration = self.signed_duration_since(since);
+        Ok(FloatDuration::from_chrono(&chrono_duration))
+    }
+}
+#[cfg(feature = "chrono")]
+impl TimePoint for chrono::NaiveDate {
+    type Err = ();
+    fn float_duration_since(self, since: chrono::NaiveDate) -> Result<FloatDuration, ()> {
+        let chrono_duration = self.signed_duration_since(since);
+        Ok(FloatDuration::from_chrono(&chrono_duration))
+    }
+}
+#[cfg(feature = "chrono")]
+impl TimePoint for chrono::NaiveTime {
+    type Err = ();
+    fn float_duration_since(self, since: chrono::NaiveTime) -> Result<FloatDuration, ()> {
+        let chrono_duration = self.signed_duration_since(since);
+        Ok(FloatDuration::from_chrono(&chrono_duration))
+    }
+}
+#[cfg(feature = "chrono")]
+impl TimePoint for chrono::NaiveDateTime {
+    type Err = ();
+    fn float_duration_since(self, since: chrono::NaiveDateTime) -> Result<FloatDuration, ()> {
+        let chrono_duration = self.signed_duration_since(since);
+        Ok(FloatDuration::from_chrono(&chrono_duration))
+    }
+}
+
 impl TimePoint for time::Instant {
-    type Err = DurationError;
-    fn float_duration_since(self, since: time::Instant) -> error::Result<FloatDuration> {
+    type Err = ();
+    fn float_duration_since(self, since: time::Instant) -> Result<FloatDuration, ()> {
         let std_duration = self.duration_since(since);
         Ok(FloatDuration::from_std(std_duration))
     }
