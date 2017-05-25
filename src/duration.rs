@@ -43,20 +43,6 @@ pub struct FloatDuration {
     secs: f64,
 }
 
-/// A duration decomposed into components.
-///
-/// `DecomposedTime` is mainly provided for a more human-readable and composable
-/// representation of a `FloatDuration`. It may be converted back-and-forth
-/// between `FloatDuration` at will.
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
-pub struct DecomposedTime {
-    pub days: u32,
-    pub hours: u32,
-    pub minutes: u32,
-    pub seconds: u32,
-    pub fractional_seconds: f64,
-    pub sign: i8,
-}
 
 impl FloatDuration {
     /// Create a new `FloatDuration` representing a number of days.
@@ -86,33 +72,6 @@ impl FloatDuration {
     /// Create a new `FloatDuration` representing a number of nanoseconds.
     pub fn nanoseconds(nanos: f64) -> FloatDuration {
         FloatDuration { secs: nanos / 1.0e9 }
-    }
-
-    /// Decompose a `FloatDuration` into a `DecomposedTime` representation.
-    ///
-    /// The result represents the same duration, but in a more human-readable
-    /// way. It may be converted back into a `FloatDuration` via
-    /// `FloatDuration::from_decomposed`.
-    pub fn decompose(&self) -> DecomposedTime {
-        let mut secs_left = self.secs;
-
-        let days = (secs_left / SECS_PER_DAY).trunc();
-        secs_left -= days * SECS_PER_DAY;
-        let hours = (secs_left / SECS_PER_HOUR).trunc();
-        secs_left -= hours * SECS_PER_HOUR;
-        let minutes = (secs_left / SECS_PER_MINUTE).trunc();
-        secs_left -= minutes * SECS_PER_MINUTE;
-        let seconds = secs_left.trunc();
-        let fract = secs_left.fract();
-
-        DecomposedTime {
-            days: days as u32,
-            hours: hours as u32,
-            minutes: minutes as u32,
-            seconds: seconds as u32,
-            fractional_seconds: fract,
-            sign: self.secs.signum() as i8,
-        }
     }
 
     /// Return the total number of fractional days represented by the `FloatDuration`.
@@ -202,15 +161,6 @@ impl FloatDuration {
                                (duration.subsec_nanos() as f64) * 1.0e-9)
     }
 
-    /// Create a `FloatDuration` object from a `DecomposedTime`.
-    pub fn from_decomposed(decomposed: &DecomposedTime) -> FloatDuration {
-        let seconds =
-            (decomposed.days as f64) * SECS_PER_DAY + (decomposed.hours as f64) * SECS_PER_HOUR +
-            (decomposed.minutes as f64) * SECS_PER_MINUTE +
-            (decomposed.seconds as f64) + decomposed.fractional_seconds;
-
-        FloatDuration { secs: (decomposed.sign as f64) * seconds }
-    }
 }
 
 #[cfg(feature = "chrono")]
@@ -244,40 +194,6 @@ impl FloatDuration {
     }
 }
 
-impl DecomposedTime {
-    pub fn zero() -> DecomposedTime {
-        DecomposedTime {
-            days: 0,
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
-            fractional_seconds: 0.0,
-            sign: 1,
-        }
-    }
-
-    pub fn from_components(days: u32,
-                           hours: u32,
-                           minutes: u32,
-                           seconds: u32,
-                           fractional_seconds: f64)
-                           -> DecomposedTime {
-        DecomposedTime {
-            days,
-            hours,
-            minutes,
-            seconds,
-            fractional_seconds,
-            sign: 1,
-        }
-    }
-
-    pub fn negate(mut self) -> DecomposedTime {
-        self.sign *= -1;
-        self
-    }
-}
-
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> error::Result<FloatDuration> {
@@ -295,32 +211,6 @@ impl TimePoint for time::SystemTime {
     fn float_duration_since(self, since: time::SystemTime) -> error::Result<FloatDuration> {
         let std_duration = self.duration_since(since)?;
         Ok(FloatDuration::from_std(std_duration))
-    }
-}
-
-impl fmt::Display for DecomposedTime {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        if self.days > 0 {
-            write!(fmt, "{}d ", self.days as u64)?;
-        }
-
-        if self.sign.is_negative() {
-            write!(fmt, "-")?;
-        }
-        if self.fractional_seconds > 0.0 {
-            write!(fmt,
-                   "{:02}:{:02}:{}{}",
-                   self.hours,
-                   self.minutes,
-                   if self.seconds < 10 { "0" } else { "" },
-                   self.seconds as f64 + self.fractional_seconds)
-        } else {
-            write!(fmt,
-                   "{:02}:{:02}:{:02}",
-                   self.hours,
-                   self.minutes,
-                   self.seconds)
-        }
     }
 }
 
@@ -523,27 +413,18 @@ mod tests {
         use std::fmt::Write;
 
         let mut buffer1 = "".to_string();
-        let mut buffer1_2 = "".to_string();
         let duration1 = FloatDuration::minutes(3.5);
         write!(buffer1, "{}", duration1).unwrap();
-        write!(buffer1_2, "{}", duration1.decompose()).unwrap();
         assert_eq!(buffer1, "3.5 minutes");
-        assert_eq!(buffer1_2, "00:03:30");
 
         let mut buffer2 = "".to_string();
-        let mut buffer2_2 = "".to_string();
         let duration2 = FloatDuration::days(3.0) + FloatDuration::hours(12.0);
         write!(buffer2, "{}", duration2).unwrap();
-        write!(buffer2_2, "{}", duration2.decompose()).unwrap();
         assert_eq!(buffer2, "3.5 days");
-        assert_eq!(buffer2_2, "3d 12:00:00");
 
         let mut buffer3 = "".to_string();
-        let mut buffer3_2 = "".to_string();
         let duration3 = FloatDuration::microseconds(100.0);
         write!(buffer3, "{}", duration3).unwrap();
-        write!(buffer3_2, "{}", duration3.decompose()).unwrap();
         assert_eq!(buffer3, "100 microseconds");
-        assert_eq!(buffer3_2, "00:00:00.0001");
     }
 }
