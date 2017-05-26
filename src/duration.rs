@@ -39,9 +39,9 @@ pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
 /// via `float_duration_since` in either direction.
 pub trait TimePoint<Rhs = Self> {
     /// The type returned if there is an error computing the duration.
-    type Err;
+    type Error;
     /// The amount of time between two `TimePoint`s.
-    fn float_duration_since(self, rhs: Rhs) -> Result<FloatDuration, Self::Err>;
+    fn float_duration_since(self, rhs: Rhs) -> Result<FloatDuration, Self::Error>;
 }
 
 /// A time duration stored as a floating point quantity.
@@ -253,7 +253,7 @@ impl<'de> Deserialize<'de> for FloatDuration {
 
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
-    type Err = ();
+    type Error = ();
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -261,7 +261,7 @@ impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
 }
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::Date<Tz> {
-    type Err = ();
+    type Error = ();
     fn float_duration_since(self, since: chrono::Date<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -269,7 +269,7 @@ impl<Tz: chrono::TimeZone> TimePoint for chrono::Date<Tz> {
 }
 #[cfg(feature = "chrono")]
 impl TimePoint for chrono::NaiveDate {
-    type Err = ();
+    type Error = ();
     fn float_duration_since(self, since: chrono::NaiveDate) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -277,7 +277,7 @@ impl TimePoint for chrono::NaiveDate {
 }
 #[cfg(feature = "chrono")]
 impl TimePoint for chrono::NaiveTime {
-    type Err = ();
+    type Error = ();
     fn float_duration_since(self, since: chrono::NaiveTime) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -285,7 +285,7 @@ impl TimePoint for chrono::NaiveTime {
 }
 #[cfg(feature = "chrono")]
 impl TimePoint for chrono::NaiveDateTime {
-    type Err = ();
+    type Error = ();
     fn float_duration_since(self, since: chrono::NaiveDateTime) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -293,14 +293,14 @@ impl TimePoint for chrono::NaiveDateTime {
 }
 
 impl TimePoint for time::Instant {
-    type Err = ();
+    type Error = ();
     fn float_duration_since(self, since: time::Instant) -> Result<FloatDuration, ()> {
         let std_duration = self.duration_since(since);
         Ok(FloatDuration::from_std(std_duration))
     }
 }
 impl TimePoint for time::SystemTime {
-    type Err = time::SystemTimeError;
+    type Error = time::SystemTimeError;
     fn float_duration_since(self,
                             since: time::SystemTime)
                             -> Result<FloatDuration, time::SystemTimeError> {
