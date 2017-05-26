@@ -121,13 +121,16 @@
 //! library is supported. Additionally, `FloatDuration` objects can be converted to/from
 //! `chrono::Duration` objects via the `to_chrono` and `from_chrono` methods.
 
-
 #[cfg(feature = "chrono")]
 extern crate chrono;
 #[cfg(feature = "time")]
 extern crate time;
 #[cfg(feature = "approx")]
 extern crate approx;
+#[cfg(feature = "serde")]
+extern crate serde;
+#[cfg(all(test, feature = "serde"))]
+extern crate serde_test;
 
 pub mod duration;
 pub mod error;

@@ -10,6 +10,11 @@ use chrono;
 #[cfg(feature = "approx")]
 use approx::ApproxEq;
 
+#[cfg(feature = "serde")]
+use serde::{Serialize, Deserialize, Serializer, Deserializer};
+#[cfg(feature = "serde")]
+use serde::de::{self, Visitor};
+
 use super::error;
 
 /// Number of nanoseconds in a second.
@@ -202,6 +207,47 @@ impl FloatDuration {
         } else {
             FloatDuration::milliseconds(duration.num_milliseconds() as f64)
         }
+    }
+}
+
+#[cfg(feature = "serde")]
+struct FloatDurationVisitor;
+
+// We want to serialize a `FloatDuration` as a single f64 instead of a struct.
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for FloatDurationVisitor {
+    type Value = FloatDuration;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a floating-point value")
+    }
+    fn visit_f32<E>(self, value: f32) -> Result<FloatDuration, E>
+        where E: de::Error
+    {
+        Ok(FloatDuration::seconds(value as f64))
+    }
+    fn visit_f64<E>(self, value: f64) -> Result<FloatDuration, E>
+        where E: de::Error
+    {
+        Ok(FloatDuration::seconds(value))
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for FloatDuration {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        serializer.serialize_f64(self.secs)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for FloatDuration {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where D: Deserializer<'de>
+    {
+        deserializer.deserialize_f64(FloatDurationVisitor)
     }
 }
 
@@ -533,5 +579,23 @@ mod tests {
         assert_eq!(FloatDuration::nanoseconds(-20.0).to_chrono().unwrap(),
                    chrono::Duration::nanoseconds(-20));
 
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn test_serde() {
+        use serde_test::{Token, assert_tokens};
+
+        let duration = FloatDuration::seconds(1.5);
+        assert_tokens(&duration, &[Token::F64(duration.as_seconds())]);
+
+        assert_tokens(&FloatDuration::zero(), &[Token::F64(0.0)]);
+
+        let duration2 = FloatDuration::hours(3.0);
+        assert_tokens(&duration2, &[Token::F64(3.0 * SECS_PER_HOUR)]);
+
+        let duration3 = FloatDuration::days(5.0) + FloatDuration::minutes(35.2) +
+                        FloatDuration::milliseconds(100.0);
+        assert_tokens(&duration3, &[Token::F64(duration3.as_seconds())]);
     }
 }
