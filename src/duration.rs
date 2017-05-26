@@ -63,34 +63,42 @@ impl FloatDuration {
     ///
     /// `float_duration` considers one year to be exactly 365 days, with
     /// no consideration of leap years.
+    #[inline]
     pub fn years(years: f64) -> FloatDuration {
         FloatDuration { secs: years * SECS_PER_YEAR }
     }
     /// Create a new `FloatDuration` representing a number of days.
+    #[inline]
     pub fn days(days: f64) -> FloatDuration {
         FloatDuration { secs: days * SECS_PER_DAY }
     }
     /// Create a new `FloatDuration` representing a number of hours.
+    #[inline]
     pub fn hours(hours: f64) -> FloatDuration {
         FloatDuration { secs: hours * SECS_PER_HOUR }
     }
     /// Create a new `FloatDuration` representing a number of minutes.
+    #[inline]
     pub fn minutes(mins: f64) -> FloatDuration {
         FloatDuration { secs: mins * SECS_PER_MINUTE }
     }
     /// Create a new `FloatDuration` representing a number of seconds.
+    #[inline]
     pub fn seconds(secs: f64) -> FloatDuration {
         FloatDuration { secs: secs }
     }
     /// Create a new `FloatDuration` representing a number of milliseconds.
+    #[inline]
     pub fn milliseconds(millis: f64) -> FloatDuration {
         FloatDuration { secs: millis / MILLIS_PER_SEC }
     }
     /// Create a new `FloatDuration` representing a number of microseconds.
+    #[inline]
     pub fn microseconds(micros: f64) -> FloatDuration {
         FloatDuration { secs: micros / MICROS_PER_SEC }
     }
     /// Create a new `FloatDuration` representing a number of nanoseconds.
+    #[inline]
     pub fn nanoseconds(nanos: f64) -> FloatDuration {
         FloatDuration { secs: nanos / NANOS_PER_SEC }
     }
@@ -99,64 +107,79 @@ impl FloatDuration {
     ///
     /// `float_duration` considers one year to be exactly 365 days, with
     /// no consideration of leap years.
+    #[inline]
     pub fn as_years(&self) -> f64 {
         self.secs / SECS_PER_YEAR
     }
     /// Return the total number of fractional days represented by the `FloatDuration`.
+    #[inline]
     pub fn as_days(&self) -> f64 {
         self.secs / SECS_PER_DAY
     }
     /// Return the total number of fractional hours represented by the `FloatDuration`.
+    #[inline]
     pub fn as_hours(&self) -> f64 {
         self.secs / SECS_PER_HOUR
     }
     /// Return the total number of fractional minutes represented by the `FloatDuration`.
+    #[inline]
     pub fn as_minutes(&self) -> f64 {
         self.secs / SECS_PER_MINUTE
     }
     /// Return the total number of fractional seconds represented by the `FloatDuration`.
+    #[inline]
     pub fn as_seconds(&self) -> f64 {
         self.secs
     }
     /// Return the total number of fractional milliseconds represented by the `FloatDuration`.
+    #[inline]
     pub fn as_milliseconds(&self) -> f64 {
         self.secs * MILLIS_PER_SEC
     }
     /// Return the total number of fractional microseconds represented by the `FloatDuration`.
+    #[inline]
     pub fn as_microseconds(&self) -> f64 {
         self.secs * MICROS_PER_SEC
     }
     /// Return the total number of fractional nanoseconds represented by the `FloatDuration`.
+    #[inline]
     pub fn as_nanoseconds(&self) -> f64 {
         self.secs * NANOS_PER_SEC
     }
 
     /// Compute the absolute value of this duration.
+    #[inline]
     pub fn abs(self) -> FloatDuration {
         FloatDuration { secs: self.secs.abs() }
     }
     /// Return a new `FloatDuration` that represents zero elapsed time.
+    #[inline]
     pub fn zero() -> FloatDuration {
         FloatDuration { secs: 0.0 }
     }
     /// Returns true is this duration represents zero elapsed time (equals `FloatDuration::zero()`).
+    #[inline]
     pub fn is_zero(&self) -> bool {
         self.secs == 0.0
     }
     /// Returns true if the FloatDuration holds a positive amount of time.
+    #[inline]
     pub fn is_positive(&self) -> bool {
         self.secs.is_sign_positive()
     }
     /// Returns true if the FloatDuration holds a negative amount of time.
+    #[inline]
     pub fn is_negative(&self) -> bool {
         self.secs.is_sign_negative()
     }
 
     /// Return a new `FloatDuration` with the minimum possible value.
+    #[inline]
     pub fn min_value() -> FloatDuration {
         FloatDuration { secs: f64::MIN }
     }
     /// Return a new `FloatDuration` with the maximum possible value.
+    #[inline]
     pub fn max_value() -> FloatDuration {
         FloatDuration { secs: f64::MAX }
     }
@@ -184,6 +207,7 @@ impl FloatDuration {
     }
 
     /// Create a `FloatDuration` object from a `std::time::Duration`.
+    #[inline]
     pub fn from_std(duration: time::Duration) -> FloatDuration {
         FloatDuration::seconds((duration.as_secs() as f64) +
                                (duration.subsec_nanos() as f64) / NANOS_PER_SEC)
@@ -214,6 +238,7 @@ impl FloatDuration {
     /// precision if the duration is too large to be entirely represented as a single
     /// value. Thus, if the absolute value of the total number of nanoseconds is
     /// greater than `i64::MAX`, only millisecond precision will be captured.
+    #[inline]
     pub fn from_chrono(duration: &chrono::Duration) -> FloatDuration {
         if let Some(nanos) = duration.num_nanoseconds() {
             FloatDuration::nanoseconds(nanos as f64)
@@ -267,6 +292,7 @@ impl<'de> Deserialize<'de> for FloatDuration {
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
     type Error = ();
+    #[inline]
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -275,6 +301,7 @@ impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
 #[cfg(feature = "chrono")]
 impl<Tz: chrono::TimeZone> TimePoint for chrono::Date<Tz> {
     type Error = ();
+    #[inline]
     fn float_duration_since(self, since: chrono::Date<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -283,6 +310,7 @@ impl<Tz: chrono::TimeZone> TimePoint for chrono::Date<Tz> {
 #[cfg(feature = "chrono")]
 impl TimePoint for chrono::NaiveDate {
     type Error = ();
+    #[inline]
     fn float_duration_since(self, since: chrono::NaiveDate) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -291,6 +319,7 @@ impl TimePoint for chrono::NaiveDate {
 #[cfg(feature = "chrono")]
 impl TimePoint for chrono::NaiveTime {
     type Error = ();
+    #[inline]
     fn float_duration_since(self, since: chrono::NaiveTime) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -299,6 +328,7 @@ impl TimePoint for chrono::NaiveTime {
 #[cfg(feature = "chrono")]
 impl TimePoint for chrono::NaiveDateTime {
     type Error = ();
+    #[inline]
     fn float_duration_since(self, since: chrono::NaiveDateTime) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
         Ok(FloatDuration::from_chrono(&chrono_duration))
@@ -307,6 +337,7 @@ impl TimePoint for chrono::NaiveDateTime {
 
 impl TimePoint for time::Instant {
     type Error = ();
+    #[inline]
     fn float_duration_since(self, since: time::Instant) -> Result<FloatDuration, ()> {
         let std_duration = self.duration_since(since);
         Ok(FloatDuration::from_std(std_duration))
@@ -314,6 +345,7 @@ impl TimePoint for time::Instant {
 }
 impl TimePoint for time::SystemTime {
     type Error = time::SystemTimeError;
+    #[inline]
     fn float_duration_since(self,
                             since: time::SystemTime)
                             -> Result<FloatDuration, time::SystemTimeError> {
