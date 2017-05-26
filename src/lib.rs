@@ -23,7 +23,7 @@
 //!
 //! ```ignore
 //! [dependencies]
-//! float_duration = "0.1"
+//! float_duration = "0.2"
 //! ```
 //! # Overview
 //!
@@ -123,6 +123,9 @@
 //! "chrono" is enabled.
 //! Additionally, `FloatDuration` objects can be converted to/from
 //! `chrono::Duration` objects via the `to_chrono` and `from_chrono` methods.
+//!
+//! Note: if the `chrono` feature is enabled, the `time` feature must also be enabled
+//! as `chrono` directly relies on some types defined in `time`.
 //!
 //! ```rust,ignore
 //! use chrono::{UTC, TimeZone};
