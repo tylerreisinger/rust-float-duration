@@ -124,6 +124,17 @@
 //! Additionally, `FloatDuration` objects can be converted to/from
 //! `chrono::Duration` objects via the `to_chrono` and `from_chrono` methods.
 //!
+//! ```rust,ignore
+//! use chrono::{UTC, TimeZone};
+//! use float_duration::{TimePoint, FloatDuration};
+//!
+//! let date1 = UTC.ymd(2017, 5, 25).and_hms(10, 0, 0);
+//! let date2 = UTC.ymd(2017, 5, 26).and_hms(12, 0, 0);
+//!
+//! assert_eq!(date2.float_duration_since(date1).unwrap(), FloatDuration::days(1.0) +
+//!     FloatDuration::hours(2.0));
+//! ```
+//!
 //! ## [serde](https://crates.io/crates/serde)
 //!
 //! `FloatDuration` supports serialization with `serde`. Presently, a `FloatDuration`

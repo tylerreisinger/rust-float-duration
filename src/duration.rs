@@ -581,6 +581,23 @@ mod tests {
 
     }
 
+    #[cfg(feature = "chrono")]
+    #[test]
+    fn test_chrono_timepoint() {
+        use chrono::{TimeZone, UTC, Local};
+
+        let date1 = UTC.ymd(2017, 5, 25).and_hms(10, 0, 0);
+        let date2 = UTC.ymd(2017, 5, 26).and_hms(12, 0, 0);
+
+        assert_eq!(date2.float_duration_since(date1).unwrap(),
+                   FloatDuration::days(1.0) + FloatDuration::hours(2.0));
+
+        let date3 = Local::now();
+        assert_eq!(date3.float_duration_since(date3).unwrap(),
+                   FloatDuration::zero());
+        assert!(date3.float_duration_since(Local::now()).unwrap() < FloatDuration::zero());
+    }
+
     #[cfg(feature = "serde")]
     #[test]
     fn test_serde() {
