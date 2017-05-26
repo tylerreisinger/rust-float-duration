@@ -5,7 +5,7 @@ use std::fmt;
 #[cfg(feature = "chrono")]
 use time;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct OutOfRangeError {}
 
 impl OutOfRangeError {

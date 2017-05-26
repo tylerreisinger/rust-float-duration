@@ -1,7 +1,7 @@
 //! Temporal quantification using floating-point quantities.
 //!
 //! This crate provides quantification for spans of time. Unlike the standard
-//! [std::time](https://doc.rust-lang.org/std/time/index.html) or the
+//! [`std::time`](https://doc.rust-lang.org/std/time/index.html) or the
 //! [chrono](https://crates.io/crates/chrono) crate, this crate aims
 //! to provide a fully featured Duration type which exposes and uses floating-point
 //! values instead of integer ones.
@@ -86,7 +86,7 @@
 //!
 //! # Library Support
 //!
-//! Currently **float_duration** can be compiled without any dependencies, but it
+//! Currently `float_duration` can be compiled without any dependencies, but it
 //! provides optional features for interfacing with other libraries.
 //!
 //! ## std::time
