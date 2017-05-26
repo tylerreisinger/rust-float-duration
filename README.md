@@ -1,5 +1,6 @@
 [float_duration](https://docs.rs/float_duration) 0.2.0
 ======================
+[![Build Status](https://travis-ci.org/tylerreisinger/rust-float-duration.svg?branch=master)](https://travis-ci.org/tylerreisinger/rust-float-duration)
 [![float_duration on docs.rs][docsrs-image]][docsrs]
 [![float_duration on crates.io][crates-image]][crates]
 

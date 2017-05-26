@@ -18,6 +18,9 @@ repository = "https://github.com/tylerreisinger/rust-float-duration"
 keywords = ["time", "duration", "float", "simulation"]
 categories = ["date-and-time"]
 
+[badges]
+travis-ci = { repository = "tylerreisinger/rust-float-duration" }
+
 [lib]
 name = "float_duration"
 path = "src/lib.rs"
