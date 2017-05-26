@@ -4,6 +4,7 @@ use std::fmt;
 use std::ops;
 use std::f64;
 use std::u64;
+use std::iter::Sum;
 
 #[cfg(feature = "chrono")]
 use chrono;
@@ -454,6 +455,20 @@ impl Default for FloatDuration {
         FloatDuration::zero()
     }
 }
+impl Sum for FloatDuration {
+    fn sum<I>(iter: I) -> FloatDuration
+        where I: Iterator<Item = FloatDuration>
+    {
+        iter.fold(FloatDuration::zero(), |a, b| a + b)
+    }
+}
+impl<'a> Sum<&'a FloatDuration> for FloatDuration {
+    fn sum<I>(iter: I) -> FloatDuration
+        where I: Iterator<Item = &'a FloatDuration>
+    {
+        iter.fold(FloatDuration::zero(), |a, &b| a + b)
+    }
+}
 
 #[cfg(feature = "approx")]
 impl ApproxEq for FloatDuration {
@@ -601,6 +616,24 @@ mod tests {
                    "25.25 nanoseconds");
         assert_eq!(format!("{}", FloatDuration::minutes(90.0)), "1.5 hours");
         assert_eq!(format!("{}", FloatDuration::years(2.5)), "2.5 years");
+    }
+
+    #[test]
+    fn test_sum() {
+        use std::iter::Sum;
+
+        let zero: [FloatDuration; 0] = [];
+
+        assert_eq!(zero.iter().sum::<FloatDuration>(), FloatDuration::zero());
+
+        assert_eq!([FloatDuration::milliseconds(50.0),
+                    FloatDuration::milliseconds(30.0),
+                    FloatDuration::zero()]
+                       .iter()
+                       .sum::<FloatDuration>(),
+                   FloatDuration::milliseconds(80.0));
+        assert_eq!([FloatDuration::days(2.0)].iter().sum::<FloatDuration>(),
+                   FloatDuration::days(2.0));
     }
 
     #[cfg(feature = "chrono")]
