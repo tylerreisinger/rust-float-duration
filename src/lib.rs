@@ -123,6 +123,12 @@
 //! "chrono" is enabled.
 //! Additionally, `FloatDuration` objects can be converted to/from
 //! `chrono::Duration` objects via the `to_chrono` and `from_chrono` methods.
+//!
+//! ## [serde](https://crates.io/crates/serde)
+//!
+//! `FloatDuration` supports serialization with `serde`. Presently, a `FloatDuration`
+//! is serialized to a single `f64` value representing the number of seconds in the
+//! duration.
 
 #[cfg(feature = "chrono")]
 extern crate chrono;
