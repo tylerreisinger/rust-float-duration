@@ -115,10 +115,13 @@
 //! Since `FloatDuration` uses floating point values, this should be the
 //! preferred way to establish equality between two duration objects.
 //!
-//! ## chrono
+//! ## [chrono](https://crates.io/crates/chrono)
 //!
-//! Similar to `std::time` computing a `FloatDuration` between two times in the chrono
-//! library is supported. Additionally, `FloatDuration` objects can be converted to/from
+//! Similar to `std::time`, computing a `FloatDuration` between any two of the same type of
+//! date or time objects
+//! is supported via `TimePoint` trait impls, assuming the feature
+//! "chrono" is enabled.
+//! Additionally, `FloatDuration` objects can be converted to/from
 //! `chrono::Duration` objects via the `to_chrono` and `from_chrono` methods.
 
 #[cfg(feature = "chrono")]
