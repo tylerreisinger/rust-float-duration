@@ -5,7 +5,7 @@
 
 [docsrs-image]: https://docs.rs/float_duration/badge.svg?version=0.1.0
 [docsrs]: https://docs.rs/float_duration/0.1.0/
-[crates-image]: https://img.shields.io/crates/v/serde.svg
+[crates-image]: https://img.shields.io/crates/v/float_duration.svg
 [crates]: https://crates.io/crates/float_duration
 
 Temporal quantification using floating-point quantities.
