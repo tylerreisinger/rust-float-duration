@@ -32,7 +32,6 @@ pub const SECS_PER_DAY: f64 = SECS_PER_HOUR * 24.0;
 /// Number of seconds in a year.
 pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
 
-
 /// A specific point in time.
 ///
 /// Types implementing `TimePoint` can have a `FloatDuration` computed between them
