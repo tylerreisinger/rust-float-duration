@@ -620,8 +620,6 @@ mod tests {
 
     #[test]
     fn test_sum() {
-        use std::iter::Sum;
-
         let zero: [FloatDuration; 0] = [];
 
         assert_eq!(zero.iter().sum::<FloatDuration>(), FloatDuration::zero());
