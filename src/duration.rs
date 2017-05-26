@@ -60,6 +60,13 @@ pub struct FloatDuration {
 
 
 impl FloatDuration {
+    /// Create a new `FloatDuration` representing a number of years.
+    ///
+    /// `float_duration` considers one year to be exactly 365 days, with
+    /// no consideration of leap years.
+    pub fn years(years: f64) -> FloatDuration {
+        FloatDuration { secs: years * SECS_PER_YEAR }
+    }
     /// Create a new `FloatDuration` representing a number of days.
     pub fn days(days: f64) -> FloatDuration {
         FloatDuration { secs: days * SECS_PER_DAY }
@@ -89,6 +96,13 @@ impl FloatDuration {
         FloatDuration { secs: nanos / NANOS_PER_SEC }
     }
 
+    /// Return the total number of fractional years represented by the `FloatDuration`.
+    ///
+    /// `float_duration` considers one year to be exactly 365 days, with
+    /// no consideration of leap years.
+    pub fn as_years(&self) -> f64 {
+        self.secs / SECS_PER_YEAR
+    }
     /// Return the total number of fractional days represented by the `FloatDuration`.
     pub fn as_days(&self) -> f64 {
         self.secs / SECS_PER_DAY
@@ -311,7 +325,9 @@ impl TimePoint for time::SystemTime {
 
 impl fmt::Display for FloatDuration {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        if self.secs > SECS_PER_DAY {
+        if self.secs > SECS_PER_YEAR {
+            write!(fmt, "{} years", self.as_years())
+        } else if self.secs > SECS_PER_DAY {
             write!(fmt, "{} days", self.as_days())
         } else if self.secs > SECS_PER_HOUR {
             write!(fmt, "{} hours", self.as_hours())
@@ -475,6 +491,8 @@ mod tests {
         assert_eq!(duration4.as_minutes(), -3.0);
         assert_eq!(duration4.as_hours(), -0.05);
         assert!(duration4.is_negative());
+
+        assert_eq!(FloatDuration::years(2.0), FloatDuration::days(365.0 * 2.0));
     }
 
     #[test]
@@ -542,8 +560,8 @@ mod tests {
         assert_eq!(format!("{}", FloatDuration::milliseconds(12.5)),
                    "12.5 milliseconds");
 
-        assert_eq!(format!("{}", FloatDuration::days(365.0) + FloatDuration::hours(6.0)),
-                   "365.25 days");
+        assert_eq!(format!("{}", FloatDuration::days(325.0) + FloatDuration::hours(6.0)),
+                   "325.25 days");
         assert_eq!(format!("{}",
                            FloatDuration::milliseconds(50.0) + FloatDuration::microseconds(500.0)),
                    "50.5 milliseconds");
@@ -551,6 +569,7 @@ mod tests {
         assert_eq!(format!("{}", FloatDuration::nanoseconds(25.25)),
                    "25.25 nanoseconds");
         assert_eq!(format!("{}", FloatDuration::minutes(90.0)), "1.5 hours");
+        assert_eq!(format!("{}", FloatDuration::years(2.5)), "2.5 years");
     }
 
     #[cfg(feature = "chrono")]
