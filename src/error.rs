@@ -16,8 +16,7 @@ impl OutOfRangeError {
 
 impl Error for OutOfRangeError {
     fn description(&self) -> &str {
-        "The conversion between duration representations yielded
-        produced an out-of-range value"
+        "The converted duration value is out of range."
     }
 }
 
