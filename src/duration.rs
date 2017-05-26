@@ -69,7 +69,7 @@ impl FloatDuration {
     }
     /// Create a new `FloatDuration` representing a number of seconds.
     pub fn seconds(secs: f64) -> FloatDuration {
-        FloatDuration { secs }
+        FloatDuration { secs: secs }
     }
     /// Create a new `FloatDuration` representing a number of milliseconds.
     pub fn milliseconds(millis: f64) -> FloatDuration {
