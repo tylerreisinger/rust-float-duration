@@ -240,7 +240,7 @@ impl FloatDuration {
     /// value. Thus, if the absolute value of the total number of nanoseconds is
     /// greater than `i64::MAX`, only millisecond precision will be captured.
     #[inline]
-    pub fn from_chrono(duration: &chrono::Duration) -> FloatDuration {
+    pub fn from_chrono(duration: chrono::Duration) -> FloatDuration {
         if let Some(nanos) = duration.num_nanoseconds() {
             FloatDuration::nanoseconds(nanos as f64)
         } else {
@@ -296,7 +296,7 @@ impl<Tz: chrono::TimeZone> TimePoint for chrono::DateTime<Tz> {
     #[inline]
     fn float_duration_since(self, since: chrono::DateTime<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
-        Ok(FloatDuration::from_chrono(&chrono_duration))
+        Ok(FloatDuration::from_chrono(chrono_duration))
     }
 }
 #[cfg(feature = "chrono")]
@@ -305,7 +305,7 @@ impl<Tz: chrono::TimeZone> TimePoint for chrono::Date<Tz> {
     #[inline]
     fn float_duration_since(self, since: chrono::Date<Tz>) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
-        Ok(FloatDuration::from_chrono(&chrono_duration))
+        Ok(FloatDuration::from_chrono(chrono_duration))
     }
 }
 #[cfg(feature = "chrono")]
@@ -314,7 +314,7 @@ impl TimePoint for chrono::NaiveDate {
     #[inline]
     fn float_duration_since(self, since: chrono::NaiveDate) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
-        Ok(FloatDuration::from_chrono(&chrono_duration))
+        Ok(FloatDuration::from_chrono(chrono_duration))
     }
 }
 #[cfg(feature = "chrono")]
@@ -323,7 +323,7 @@ impl TimePoint for chrono::NaiveTime {
     #[inline]
     fn float_duration_since(self, since: chrono::NaiveTime) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
-        Ok(FloatDuration::from_chrono(&chrono_duration))
+        Ok(FloatDuration::from_chrono(chrono_duration))
     }
 }
 #[cfg(feature = "chrono")]
@@ -332,7 +332,7 @@ impl TimePoint for chrono::NaiveDateTime {
     #[inline]
     fn float_duration_since(self, since: chrono::NaiveDateTime) -> Result<FloatDuration, ()> {
         let chrono_duration = self.signed_duration_since(since);
-        Ok(FloatDuration::from_chrono(&chrono_duration))
+        Ok(FloatDuration::from_chrono(chrono_duration))
     }
 }
 
@@ -644,19 +644,19 @@ mod tests {
     #[cfg(feature = "chrono")]
     #[test]
     fn test_chrono_conversion() {
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::minutes(10)),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::minutes(10)),
                    FloatDuration::minutes(10.0));
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::hours(72)),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::hours(72)),
                    FloatDuration::days(3.0));
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::nanoseconds(500)),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::nanoseconds(500)),
                    FloatDuration::nanoseconds(500.0));
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::microseconds(-20000)),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::microseconds(-20000)),
                    FloatDuration::milliseconds(-20.0));
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::zero()),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::zero()),
                    FloatDuration::zero());
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::hours(10000)),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::hours(10000)),
                    FloatDuration::hours(10000.0));
-        assert_eq!(FloatDuration::from_chrono(&chrono::Duration::milliseconds(1i64 << 62)),
+        assert_eq!(FloatDuration::from_chrono(chrono::Duration::milliseconds(1i64 << 62)),
                    FloatDuration::milliseconds((1i64 << 62) as f64));
 
         assert_eq!(FloatDuration::minutes(2.5).to_chrono().unwrap(),
