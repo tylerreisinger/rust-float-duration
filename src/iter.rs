@@ -3,7 +3,7 @@
 use duration::FloatDuration;
 use std::iter;
 
-/// An iterator over a evenly spaced interval of `FloatDuration`s.
+/// An iterator over an evenly spaced lattice of `FloatDuration`s.
 ///
 /// This type is returned by `subdivide` and friends, and it not meant to be
 /// instantiated directly.
