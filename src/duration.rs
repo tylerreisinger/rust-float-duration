@@ -446,8 +446,13 @@ impl fmt::Display for FloatDuration {
             write!(fmt, "{} milliseconds", self.as_milliseconds())
         } else if self.secs > 1.0e-6 {
             write!(fmt, "{} microseconds", self.as_microseconds())
-        } else {
+        } else if self.secs > 1.0e-9 {
             write!(fmt, "{} nanoseconds", self.as_nanoseconds())
+        } else if self.is_zero() {
+            write!(fmt, "0 seconds")
+        } else {
+            // Here we simply print seconds in scientific notation.
+            write!(fmt, "{:e} seconds", self.as_seconds())
         }
     }
 }
@@ -681,7 +686,7 @@ mod tests {
         assert_eq!(format!("{}", FloatDuration::days(3.0) + FloatDuration::hours(12.0)),
                    "3.5 days");
         assert_eq!(format!("{}", FloatDuration::seconds(12.7)), "12.7 seconds");
-        assert_eq!(format!("{}", FloatDuration::default()), "0 nanoseconds");
+        assert_eq!(format!("{}", FloatDuration::default()), "0 seconds");
 
         assert_eq!(format!("{}", FloatDuration::microseconds(100.0)),
                    "100 microseconds");
@@ -698,6 +703,8 @@ mod tests {
                    "25.25 nanoseconds");
         assert_eq!(format!("{}", FloatDuration::minutes(90.0)), "1.5 hours");
         assert_eq!(format!("{}", FloatDuration::years(2.5)), "2.5 years");
+        assert_eq!(format!("{}", FloatDuration::seconds(1.5e-30)),
+                   "1.5e-30 seconds");
     }
 
     #[test]
