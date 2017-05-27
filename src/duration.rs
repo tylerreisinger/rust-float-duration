@@ -33,6 +33,11 @@ pub const SECS_PER_DAY: f64 = SECS_PER_HOUR * 24.0;
 /// Number of seconds in a year.
 pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
 
+pub trait FromDuration<T>: Sized {
+    type Error;
+    fn from_duration(from: T) -> Result<Self, Self::Error>;
+}
+
 /// A specific point in time.
 ///
 /// Types implementing `TimePoint` can have a `FloatDuration` computed between them
@@ -352,6 +357,37 @@ impl TimePoint for time::SystemTime {
                             -> Result<FloatDuration, time::SystemTimeError> {
         let std_duration = self.duration_since(since)?;
         Ok(FloatDuration::from_std(std_duration))
+    }
+}
+
+impl FromDuration<time::Duration> for FloatDuration {
+    type Error = ();
+    #[inline]
+    fn from_duration(from: time::Duration) -> Result<FloatDuration, ()> {
+        Ok(FloatDuration::from_std(from))
+    }
+}
+#[cfg(feature = "chrono")]
+impl FromDuration<chrono::Duration> for FloatDuration {
+    type Error = ();
+    #[inline]
+    fn from_duration(from: chrono::Duration) -> Result<FloatDuration, ()> {
+        Ok(FloatDuration::from_chrono(&from))
+    }
+}
+impl FromDuration<FloatDuration> for time::Duration {
+    type Error = error::OutOfRangeError;
+    #[inline]
+    fn from_duration(from: FloatDuration) -> Result<time::Duration, error::OutOfRangeError> {
+        from.to_std()
+    }
+}
+#[cfg(feature = "chrono")]
+impl FromDuration<FloatDuration> for chrono::Duration {
+    type Error = error::OutOfRangeError;
+    #[inline]
+    fn from_duration(from: FloatDuration) -> Result<chrono::Duration, error::OutOfRangeError> {
+        from.to_chrono()
     }
 }
 
