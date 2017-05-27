@@ -6,6 +6,9 @@ use std::f64;
 use std::u64;
 use std::iter::Sum;
 
+#[cfg(feature = "nightly")]
+use std::convert::TryFrom;
+
 #[cfg(feature = "chrono")]
 use chrono;
 #[cfg(feature = "approx")]
@@ -36,6 +39,31 @@ pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
 pub trait FromDuration<T>: Sized {
     type Error;
     fn from_duration(from: T) -> Result<Self, Self::Error>;
+}
+
+pub trait IntoDuration<T>: Sized {
+    type Error;
+    fn into_duration(self) -> Result<T, Self::Error>;
+}
+
+impl<T, U> IntoDuration<U> for T
+    where U: FromDuration<T>
+{
+    type Error = U::Error;
+    fn into_duration(self) -> Result<U, U::Error> {
+        U::from_duration(self)
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl<T> TryFrom for T
+    where T: FromDuration<T>
+{
+    type Err = T::Error;
+
+    fn try_from(from: T) -> Result<Self, Self::Err> {
+        from.from_duration()
+    }
 }
 
 /// A specific point in time.
