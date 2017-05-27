@@ -84,6 +84,20 @@
 //! }
 //! ```
 //!
+//! Run a function on 100 evenly spaced durations:
+//!
+//! ```rust
+//! use float_duration::{FloatDuration, subdivide};
+//!
+//! fn compute_value(t: FloatDuration) -> f64 {
+//!     t.as_seconds()*t.as_seconds()
+//! }
+//!
+//! for time in subdivide(FloatDuration::zero(), FloatDuration::hours(1.0), 100) {
+//!     println!("{}", compute_value(time));
+//! }
+//! ```
+//!
 //! # Library Support
 //!
 //! Currently `float_duration` can be compiled without any dependencies, but it
