@@ -144,8 +144,6 @@
 //! is serialized to a single `f64` value representing the number of seconds in the
 //! duration.
 
-#![cfg_attr(feature = "nightly", feature(try_from))]
-
 #[cfg(feature = "chrono")]
 extern crate chrono;
 #[cfg(feature = "time")]

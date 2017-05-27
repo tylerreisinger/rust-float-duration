@@ -68,14 +68,15 @@ impl<T, U> IntoDuration<U> for T
     }
 }
 
-#[cfg(feature = "nightly")]
-impl<T> TryFrom for T
-    where T: FromDuration<T>
-{
-    type Err = T::Error;
-
-    fn try_from(from: T) -> Result<Self, Self::Err> {
-        from.from_duration()
+impl From<time::Duration> for FloatDuration {
+    fn from(from: time::Duration) -> FloatDuration {
+        FloatDuration::from_std(from)
+    }
+}
+#[cfg(feature = "chrono")]
+impl From<chrono::Duration> for FloatDuration {
+    fn from(from: chrono::Duration) -> FloatDuration {
+        FloatDuration::from_chrono(&from)
     }
 }
 
