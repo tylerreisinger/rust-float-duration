@@ -68,18 +68,6 @@ impl<T, U> IntoDuration<U> for T
     }
 }
 
-impl From<time::Duration> for FloatDuration {
-    fn from(from: time::Duration) -> FloatDuration {
-        FloatDuration::from_std(from)
-    }
-}
-#[cfg(feature = "chrono")]
-impl From<chrono::Duration> for FloatDuration {
-    fn from(from: chrono::Duration) -> FloatDuration {
-        FloatDuration::from_chrono(&from)
-    }
-}
-
 /// A specific point in time.
 ///
 /// Types implementing `TimePoint` can have a `FloatDuration` computed between them
@@ -414,7 +402,7 @@ impl FromDuration<chrono::Duration> for FloatDuration {
     type Error = ();
     #[inline]
     fn from_duration(from: chrono::Duration) -> Result<FloatDuration, ()> {
-        Ok(FloatDuration::from_chrono(&from))
+        Ok(FloatDuration::from_chrono(from))
     }
 }
 impl FromDuration<FloatDuration> for time::Duration {
@@ -430,6 +418,18 @@ impl FromDuration<FloatDuration> for chrono::Duration {
     #[inline]
     fn from_duration(from: FloatDuration) -> Result<chrono::Duration, error::OutOfRangeError> {
         from.to_chrono()
+    }
+}
+
+impl From<time::Duration> for FloatDuration {
+    fn from(from: time::Duration) -> FloatDuration {
+        FloatDuration::from_std(from)
+    }
+}
+#[cfg(feature = "chrono")]
+impl From<chrono::Duration> for FloatDuration {
+    fn from(from: chrono::Duration) -> FloatDuration {
+        FloatDuration::from_chrono(from)
     }
 }
 
