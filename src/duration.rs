@@ -6,9 +6,6 @@ use std::f64;
 use std::u64;
 use std::iter::Sum;
 
-#[cfg(feature = "nightly")]
-use std::convert::TryFrom;
-
 #[cfg(feature = "chrono")]
 use chrono;
 #[cfg(feature = "approx")]
