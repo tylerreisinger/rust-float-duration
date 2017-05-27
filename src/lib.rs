@@ -161,3 +161,4 @@ pub mod iter;
 
 pub use duration::{FloatDuration, TimePoint};
 pub use error::OutOfRangeError;
+pub use iter::{subdivide, subdivide_with_step};
