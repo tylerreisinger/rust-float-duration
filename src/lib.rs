@@ -23,7 +23,7 @@
 //!
 //! ```ignore
 //! [dependencies]
-//! float_duration = "0.2"
+//! float_duration = "0.3"
 //! ```
 //! # Overview
 //!

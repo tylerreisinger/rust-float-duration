@@ -1,11 +1,11 @@
-[float_duration](https://docs.rs/float_duration) 0.2.0
+[float_duration](https://docs.rs/float_duration) 0.3.0
 ======================
 [![Build Status](https://travis-ci.org/tylerreisinger/rust-float-duration.svg?branch=master)](https://travis-ci.org/tylerreisinger/rust-float-duration)
 [![float_duration on docs.rs][docsrs-image]][docsrs]
 [![float_duration on crates.io][crates-image]][crates]
 
-[docsrs-image]: https://docs.rs/float_duration/badge.svg?version=0.2.0
-[docsrs]: https://docs.rs/float_duration/0.2.0/
+[docsrs-image]: https://docs.rs/float_duration/badge.svg?version=0.3.0
+[docsrs]: https://docs.rs/float_duration/0.3.0/
 [crates-image]: https://img.shields.io/crates/v/float_duration.svg
 [crates]: https://crates.io/crates/float_duration
 
@@ -34,7 +34,7 @@ Put this in your `Cargo.toml`:
 
 ```
 [dependencies]
-float_duration = "0.2"
+float_duration = "0.3"
 ```
 # Overview
 
