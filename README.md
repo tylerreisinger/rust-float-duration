@@ -94,6 +94,20 @@ fn main() {
 }
 ```
 
+Run a function on 100 evenly spaced durations:
+
+```rust
+use float_duration::{FloatDuration, subdivide};
+
+fn compute_value(t: FloatDuration) -> f64 {
+    t.as_seconds()*t.as_seconds()
+}
+
+for time in subdivide(FloatDuration::zero(), FloatDuration::hours(1.0), 100) {
+    println!("{}", compute_value(time));
+}
+```
+
 # Library Support
 
 Currently `float_duration` can be compiled without any dependencies, but it
@@ -133,6 +147,9 @@ is supported via `TimePoint` trait impls, assuming the feature
 "chrono" is enabled.
 Additionally, `FloatDuration` objects can be converted to/from
 `chrono::Duration` objects via the `to_chrono` and `from_chrono` methods.
+
+Note: if the `chrono` feature is enabled, the `time` feature must also be enabled
+as `chrono` directly relies on some types defined in `time`.
 
 ```rust
 use chrono::{UTC, TimeZone};
