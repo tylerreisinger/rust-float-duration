@@ -36,13 +36,26 @@ pub const SECS_PER_DAY: f64 = SECS_PER_HOUR * 24.0;
 /// Number of seconds in a year.
 pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
 
+/// A fallible conversion from one duration representation to another.
+///
+/// This is very similar to the `std::convert::TryFrom` trait which is currently
+/// unstable.
 pub trait FromDuration<T>: Sized {
     type Error;
+    /// Convert `from` into a `Self` object.
     fn from_duration(from: T) -> Result<Self, Self::Error>;
 }
 
+/// A fallible conversion that consumes `self`.
+///
+/// This is very similar to the `std::convert::TryInto` trait which is currently
+/// unstable.
+///
+/// Similar to `std::convert::Into`, this trait is reflexively implemented for
+/// all implementations of `FromDuration` and should not be manually implemented.
 pub trait IntoDuration<T>: Sized {
     type Error;
+    /// Convert `self` into a `T` object.
     fn into_duration(self) -> Result<T, Self::Error>;
 }
 
