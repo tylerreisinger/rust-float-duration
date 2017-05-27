@@ -175,5 +175,14 @@ mod tests {
                         FloatDuration::seconds(30.0),
                         FloatDuration::zero()]);
 
+
+        assert_eq!(subdivide(FloatDuration::zero(), FloatDuration::zero(), 3).collect::<Vec<_>>(),
+                   vec![FloatDuration::zero(), FloatDuration::zero(), FloatDuration::zero()]);
+    }
+
+    #[should_panic]
+    #[test]
+    fn test_subdivide_panic() {
+        subdivide(FloatDuration::zero(), FloatDuration::minutes(1.0), 1);
     }
 }
