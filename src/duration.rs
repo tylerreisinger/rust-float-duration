@@ -6,6 +6,9 @@ use std::f64;
 use std::u64;
 use std::iter::Sum;
 
+#[cfg(feature = "nightly")]
+use std::convert::TryFrom;
+
 #[cfg(feature = "chrono")]
 use chrono;
 #[cfg(feature = "approx")]
@@ -32,6 +35,50 @@ pub const SECS_PER_HOUR: f64 = SECS_PER_MINUTE * 60.0;
 pub const SECS_PER_DAY: f64 = SECS_PER_HOUR * 24.0;
 /// Number of seconds in a year.
 pub const SECS_PER_YEAR: f64 = SECS_PER_DAY * 365.0;
+
+/// A fallible conversion from one duration representation to another.
+///
+/// This is very similar to the `std::convert::TryFrom` trait which is currently
+/// unstable.
+pub trait FromDuration<T>: Sized {
+    type Error;
+    /// Convert `from` into a `Self` object.
+    fn from_duration(from: T) -> Result<Self, Self::Error>;
+}
+
+/// A fallible conversion that consumes `self`.
+///
+/// This is very similar to the `std::convert::TryInto` trait which is currently
+/// unstable.
+///
+/// Similar to `std::convert::Into`, this trait is reflexively implemented for
+/// all implementations of `FromDuration` and should not be manually implemented.
+pub trait IntoDuration<T>: Sized {
+    type Error;
+    /// Convert `self` into a `T` object.
+    fn into_duration(self) -> Result<T, Self::Error>;
+}
+
+impl<T, U> IntoDuration<U> for T
+    where U: FromDuration<T>
+{
+    type Error = U::Error;
+    fn into_duration(self) -> Result<U, U::Error> {
+        U::from_duration(self)
+    }
+}
+
+impl From<time::Duration> for FloatDuration {
+    fn from(from: time::Duration) -> FloatDuration {
+        FloatDuration::from_std(from)
+    }
+}
+#[cfg(feature = "chrono")]
+impl From<chrono::Duration> for FloatDuration {
+    fn from(from: chrono::Duration) -> FloatDuration {
+        FloatDuration::from_chrono(&from)
+    }
+}
 
 /// A specific point in time.
 ///
@@ -352,6 +399,37 @@ impl TimePoint for time::SystemTime {
                             -> Result<FloatDuration, time::SystemTimeError> {
         let std_duration = self.duration_since(since)?;
         Ok(FloatDuration::from_std(std_duration))
+    }
+}
+
+impl FromDuration<time::Duration> for FloatDuration {
+    type Error = ();
+    #[inline]
+    fn from_duration(from: time::Duration) -> Result<FloatDuration, ()> {
+        Ok(FloatDuration::from_std(from))
+    }
+}
+#[cfg(feature = "chrono")]
+impl FromDuration<chrono::Duration> for FloatDuration {
+    type Error = ();
+    #[inline]
+    fn from_duration(from: chrono::Duration) -> Result<FloatDuration, ()> {
+        Ok(FloatDuration::from_chrono(&from))
+    }
+}
+impl FromDuration<FloatDuration> for time::Duration {
+    type Error = error::OutOfRangeError;
+    #[inline]
+    fn from_duration(from: FloatDuration) -> Result<time::Duration, error::OutOfRangeError> {
+        from.to_std()
+    }
+}
+#[cfg(feature = "chrono")]
+impl FromDuration<FloatDuration> for chrono::Duration {
+    type Error = error::OutOfRangeError;
+    #[inline]
+    fn from_duration(from: FloatDuration) -> Result<chrono::Duration, error::OutOfRangeError> {
+        from.to_chrono()
     }
 }
 

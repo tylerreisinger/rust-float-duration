@@ -169,10 +169,11 @@ extern crate serde;
 #[cfg(all(test, feature = "serde"))]
 extern crate serde_test;
 
+
 pub mod duration;
 pub mod error;
 pub mod iter;
 
-pub use duration::{FloatDuration, TimePoint};
+pub use duration::{FloatDuration, TimePoint, FromDuration, IntoDuration};
 pub use error::OutOfRangeError;
 pub use iter::{subdivide, subdivide_with_step};

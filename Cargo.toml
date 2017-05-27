@@ -37,3 +37,5 @@ serde_test = "^1.0"
 [features]
 default = ["chrono", "time", "approx", "serde"]
 all = ["chrono", "time", "approx", "serde"]
+
+nightly = []
