@@ -157,6 +157,7 @@ extern crate serde_test;
 
 pub mod duration;
 pub mod error;
+pub mod iter;
 
 pub use duration::{FloatDuration, TimePoint};
 pub use error::OutOfRangeError;
