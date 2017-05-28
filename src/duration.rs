@@ -216,6 +216,17 @@ impl FloatDuration {
         self.secs.signum()
     }
 
+    /// Return the maximum of two durations.
+    #[inline]
+    pub fn max(self, other: FloatDuration) -> FloatDuration {
+        FloatDuration { secs: self.secs.max(other.secs) }
+    }
+    /// Return the minimum of two durations.
+    #[inline]
+    pub fn min(self, other: FloatDuration) -> FloatDuration {
+        FloatDuration { secs: self.secs.min(other.secs) }
+    }
+
     /// Return a new `FloatDuration` with the minimum possible value.
     #[inline]
     pub fn min_value() -> FloatDuration {
@@ -600,6 +611,7 @@ mod tests {
         assert_eq!(duration1.as_days(), 3.0 / 24.0);
         assert_eq!(duration1.as_milliseconds(), 180.0 * 60.0 * 1000.0);
         assert!(duration1.is_positive());
+        assert_eq!(duration1.signum(), 1.0);
 
         let duration2 = FloatDuration::milliseconds(55.0);
         assert_eq!(duration2.as_seconds(), 0.055);
@@ -627,6 +639,7 @@ mod tests {
         assert_eq!(duration4.as_minutes(), -3.0);
         assert_eq!(duration4.as_hours(), -0.05);
         assert!(duration4.is_negative());
+        assert_eq!(duration4.signum(), -1.0);
 
         assert_eq!(FloatDuration::years(2.0), FloatDuration::days(365.0 * 2.0));
     }
@@ -662,6 +675,18 @@ mod tests {
         assert!(inf.as_years().is_infinite());
         assert!(inf.as_microseconds().is_infinite());
         assert!(FloatDuration::hours(10.0) / FloatDuration::minutes(0.0) == f64::INFINITY);
+    }
+
+    #[test]
+    fn test_min_max() {
+        assert_eq!(FloatDuration::minutes(5.0).max(FloatDuration::minutes(10.0)),
+                   FloatDuration::minutes(10.0));
+        assert_eq!(FloatDuration::minutes(5.0).min(FloatDuration::minutes(10.0)),
+                   FloatDuration::minutes(5.0));
+        assert_eq!(FloatDuration::zero().max(FloatDuration::seconds(1.0)),
+                   FloatDuration::seconds(1.0));
+        assert_eq!(FloatDuration::zero().min(FloatDuration::seconds(1.0)),
+                   FloatDuration::zero());
     }
 
     #[test]
