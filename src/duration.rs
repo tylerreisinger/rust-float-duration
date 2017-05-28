@@ -853,6 +853,16 @@ mod tests {
                         FloatDuration::milliseconds(100.0);
         assert_tokens(&duration3, &[Token::F64(duration3.as_seconds())]);
 
+        assert_tokens(&FloatDuration::seconds(-10.0), &[Token::F64(-10.0)]);
+
         assert_de_tokens(&FloatDuration::seconds(30.0), &[Token::F32(30.0)]);
+    }
+
+    #[cfg(feature = "serde")]
+    #[should_panic]
+    #[test]
+    fn test_serde_integer_panic() {
+        use serde_test::{Token, assert_de_tokens};
+        assert_de_tokens(&FloatDuration::seconds(10.0), &[Token::I32(10)]);
     }
 }
