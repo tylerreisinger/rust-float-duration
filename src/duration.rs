@@ -261,6 +261,8 @@ impl FloatDuration {
     }
 
     /// Create a `FloatDuration` object from a `std::time::Duration`.
+    ///
+    /// Equivalent to using `FloatDuration::from(duration)`
     #[inline]
     pub fn from_std(duration: time::Duration) -> FloatDuration {
         FloatDuration::seconds((duration.as_secs() as f64) +
@@ -292,6 +294,8 @@ impl FloatDuration {
     /// precision if the duration is too large to be entirely represented as a single
     /// value. Thus, if the absolute value of the total number of nanoseconds is
     /// greater than `i64::MAX`, only millisecond precision will be captured.
+    ///
+    /// Equivalent to using `FloatDuration::from(duration)`
     #[inline]
     pub fn from_chrono(duration: chrono::Duration) -> FloatDuration {
         if let Some(nanos) = duration.num_nanoseconds() {
