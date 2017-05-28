@@ -734,6 +734,21 @@ mod tests {
     }
 
     #[test]
+    fn test_time_point_std() {
+        use std::time::{Instant, SystemTime, UNIX_EPOCH};
+
+        let i = Instant::now();
+        let s = SystemTime::now();
+        assert_eq!(i.float_duration_since(i), Ok(FloatDuration::zero()));
+        assert_eq!(s.float_duration_since(s).unwrap(), FloatDuration::zero());
+        assert!(Instant::now().float_duration_since(i).unwrap() > FloatDuration::zero());
+        assert!(SystemTime::now().float_duration_since(s).unwrap() > FloatDuration::zero());
+
+        assert!(SystemTime::now().float_duration_since(UNIX_EPOCH).unwrap() >
+                FloatDuration::years(30.0));
+    }
+
+    #[test]
     fn test_display() {
         assert_eq!(format!("{}", FloatDuration::minutes(3.5)), "3.5 minutes");
         assert_eq!(format!("{}", FloatDuration::days(3.0) + FloatDuration::hours(12.0)),
