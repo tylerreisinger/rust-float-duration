@@ -839,7 +839,7 @@ mod tests {
     #[cfg(feature = "serde")]
     #[test]
     fn test_serde() {
-        use serde_test::{Token, assert_tokens};
+        use serde_test::{Token, assert_tokens, assert_de_tokens};
 
         let duration = FloatDuration::seconds(1.5);
         assert_tokens(&duration, &[Token::F64(duration.as_seconds())]);
@@ -852,5 +852,7 @@ mod tests {
         let duration3 = FloatDuration::days(5.0) + FloatDuration::minutes(35.2) +
                         FloatDuration::milliseconds(100.0);
         assert_tokens(&duration3, &[Token::F64(duration3.as_seconds())]);
+
+        assert_de_tokens(&FloatDuration::seconds(30.0), &[Token::F32(30.0)]);
     }
 }
