@@ -206,6 +206,11 @@ impl FloatDuration {
         self.secs.is_sign_negative()
     }
 
+    /// Return a number that represents the sign of `self`.
+    ///
+    /// - 1.0 if the value is positive, `+0.0` or `INFINITY`
+    /// - -1.0 if the value is negative, `-0.0` or `NEG_INFINITY`
+    /// - `NAN` if the value is `NAN`
     #[inline]
     pub fn signum(&self) -> f64 {
         self.secs.signum()
