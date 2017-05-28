@@ -69,6 +69,22 @@ impl<T, U> IntoDuration<U> for T
 ///
 /// Types implementing `TimePoint` can have a `FloatDuration` computed between them
 /// via `float_duration_since` in either direction.
+///
+/// #Examples
+/// ```rust
+/// # fn perform_expensive_task() {}
+/// // Don't forget to use TimePoint.
+/// use float_duration::{TimePoint, FloatDuration};
+/// use std::time::Instant;
+///
+/// let start = Instant::now();
+/// perform_expensive_task();
+///
+/// // Computing a duration using `Instant` cannot fail, so it is safe to unwrap.
+/// let elapsed = Instant::now().float_duration_since(start).unwrap();
+///
+/// println!("Took {}.", elapsed);
+/// ```
 pub trait TimePoint<Rhs = Self> {
     /// The type returned if there is an error computing the duration.
     type Error;
