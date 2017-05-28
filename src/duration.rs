@@ -460,12 +460,14 @@ impl FromDuration<FloatDuration> for chrono::Duration {
 }
 
 impl From<time::Duration> for FloatDuration {
+    #[inline]
     fn from(from: time::Duration) -> FloatDuration {
         FloatDuration::from_std(from)
     }
 }
 #[cfg(feature = "chrono")]
 impl From<chrono::Duration> for FloatDuration {
+    #[inline]
     fn from(from: chrono::Duration) -> FloatDuration {
         FloatDuration::from_chrono(from)
     }
@@ -501,6 +503,7 @@ impl fmt::Display for FloatDuration {
 impl ops::Neg for FloatDuration {
     type Output = FloatDuration;
 
+    #[inline]
     fn neg(self) -> FloatDuration {
         FloatDuration { secs: -self.secs }
     }
@@ -509,6 +512,7 @@ impl ops::Neg for FloatDuration {
 impl ops::Add<FloatDuration> for FloatDuration {
     type Output = FloatDuration;
 
+    #[inline]
     fn add(self, rhs: FloatDuration) -> FloatDuration {
         FloatDuration { secs: self.secs + rhs.secs }
     }
@@ -516,6 +520,7 @@ impl ops::Add<FloatDuration> for FloatDuration {
 impl ops::Sub<FloatDuration> for FloatDuration {
     type Output = FloatDuration;
 
+    #[inline]
     fn sub(self, rhs: FloatDuration) -> FloatDuration {
         FloatDuration { secs: self.secs - rhs.secs }
     }
@@ -524,6 +529,7 @@ impl ops::Sub<FloatDuration> for FloatDuration {
 impl ops::Mul<f64> for FloatDuration {
     type Output = FloatDuration;
 
+    #[inline]
     fn mul(self, rhs: f64) -> FloatDuration {
         FloatDuration { secs: self.secs * rhs }
     }
@@ -531,6 +537,7 @@ impl ops::Mul<f64> for FloatDuration {
 impl ops::Mul<FloatDuration> for f64 {
     type Output = FloatDuration;
 
+    #[inline]
     fn mul(self, rhs: FloatDuration) -> FloatDuration {
         FloatDuration { secs: self * rhs.secs }
     }
@@ -538,6 +545,7 @@ impl ops::Mul<FloatDuration> for f64 {
 impl ops::Div<f64> for FloatDuration {
     type Output = FloatDuration;
 
+    #[inline]
     fn div(self, rhs: f64) -> FloatDuration {
         FloatDuration { secs: self.secs / rhs }
     }
@@ -545,33 +553,39 @@ impl ops::Div<f64> for FloatDuration {
 impl ops::Div<FloatDuration> for FloatDuration {
     type Output = f64;
 
+    #[inline]
     fn div(self, rhs: FloatDuration) -> f64 {
         self.secs / rhs.secs
     }
 }
 
 impl ops::AddAssign<FloatDuration> for FloatDuration {
+    #[inline]
     fn add_assign(&mut self, rhs: FloatDuration) {
         self.secs += rhs.secs;
     }
 }
 impl ops::SubAssign<FloatDuration> for FloatDuration {
+    #[inline]
     fn sub_assign(&mut self, rhs: FloatDuration) {
         self.secs -= rhs.secs;
     }
 }
 
 impl ops::MulAssign<f64> for FloatDuration {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.secs *= rhs;
     }
 }
 impl ops::DivAssign<f64> for FloatDuration {
+    #[inline]
     fn div_assign(&mut self, rhs: f64) {
         self.secs /= rhs;
     }
 }
 impl Default for FloatDuration {
+    #[inline]
     fn default() -> FloatDuration {
         FloatDuration::zero()
     }
