@@ -675,6 +675,17 @@ mod tests {
         assert!(inf.as_years().is_infinite());
         assert!(inf.as_microseconds().is_infinite());
         assert!(FloatDuration::hours(10.0) / FloatDuration::minutes(0.0) == f64::INFINITY);
+
+        let mut d1 = FloatDuration::seconds(5.0);
+        d1 += FloatDuration::minutes(10.0);
+        d1 *= 2.0;
+        assert_eq!(d1,
+                   FloatDuration::minutes(20.0) + FloatDuration::seconds(10.0));
+        d1 /= 2.0;
+        assert_eq!(d1,
+                   FloatDuration::minutes(10.0) + FloatDuration::seconds(5.0));
+        d1 -= d1;
+        assert_eq!(d1, FloatDuration::zero());
     }
 
     #[test]
