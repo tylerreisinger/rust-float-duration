@@ -1,6 +1,6 @@
 [package]
 name = "float_duration"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Tyler Reisinger <reisinger.tyler@gmail.com>"]
 
 description = """
