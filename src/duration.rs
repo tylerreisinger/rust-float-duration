@@ -818,8 +818,8 @@ mod tests {
         assert_eq!([FloatDuration::milliseconds(50.0),
                     FloatDuration::milliseconds(30.0),
                     FloatDuration::zero()]
-                       .iter()
-                       .sum::<FloatDuration>(),
+                           .iter()
+                           .sum::<FloatDuration>(),
                    FloatDuration::milliseconds(80.0));
         assert_eq!([FloatDuration::days(2.0)].iter().sum::<FloatDuration>(),
                    FloatDuration::days(2.0));
