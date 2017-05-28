@@ -715,6 +715,7 @@ mod tests {
         assert!(!duration2.to_std().is_ok());
         let std_duration2 = (-duration2).to_std().unwrap();
         assert_eq!(std_duration2, time::Duration::new(3600 * 2, 0));
+        assert_eq!(FloatDuration::from(std_duration2), -duration2);
         assert_eq!(FloatDuration::from_std(std_duration2), -duration2);
 
         assert_eq!(FloatDuration::zero().to_std().unwrap(),
@@ -725,6 +726,8 @@ mod tests {
         assert!(FloatDuration::max_value().to_std().is_err());
 
         assert_eq!(FloatDuration::from_std(time::Duration::new(0, 1)),
+                   FloatDuration::nanoseconds(1.0));
+        assert_eq!(FloatDuration::from(time::Duration::new(0, 1)),
                    FloatDuration::nanoseconds(1.0));
         assert_eq!(FloatDuration::from_std(time::Duration::new(1, 1)),
                    FloatDuration::seconds(1.0) + FloatDuration::nanoseconds(1.0));
@@ -776,7 +779,7 @@ mod tests {
     #[cfg(feature = "chrono")]
     #[test]
     fn test_chrono_conversion() {
-        assert_eq!(FloatDuration::from_chrono(chrono::Duration::minutes(10)),
+        assert_eq!(FloatDuration::from(chrono::Duration::minutes(10)),
                    FloatDuration::minutes(10.0));
         assert_eq!(FloatDuration::from_chrono(chrono::Duration::hours(72)),
                    FloatDuration::days(3.0));
@@ -786,7 +789,7 @@ mod tests {
                    FloatDuration::milliseconds(-20.0));
         assert_eq!(FloatDuration::from_chrono(chrono::Duration::zero()),
                    FloatDuration::zero());
-        assert_eq!(FloatDuration::from_chrono(chrono::Duration::hours(10000)),
+        assert_eq!(FloatDuration::from(chrono::Duration::hours(10000)),
                    FloatDuration::hours(10000.0));
         assert_eq!(FloatDuration::from_chrono(chrono::Duration::milliseconds(1i64 << 62)),
                    FloatDuration::milliseconds((1i64 << 62) as f64));
