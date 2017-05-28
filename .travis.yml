@@ -1,4 +1,7 @@
 language: rust
+script:
+    - RUSTFLAGS='-C link-dead-code' cargo build --verbose --all
+    - RUSTFLAGS='-C link-dead-code' cargo test --verbose --all
 rust:
     - stable
     - beta
