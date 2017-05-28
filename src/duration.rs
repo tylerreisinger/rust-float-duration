@@ -206,6 +206,11 @@ impl FloatDuration {
         self.secs.is_sign_negative()
     }
 
+    #[inline]
+    pub fn signum(&self) -> f64 {
+        self.secs.signum()
+    }
+
     /// Return a new `FloatDuration` with the minimum possible value.
     #[inline]
     pub fn min_value() -> FloatDuration {
@@ -659,11 +664,13 @@ mod tests {
         let duration1 = FloatDuration::minutes(5.0);
         let std_duration1 = duration1.to_std().unwrap();
         assert!(duration1.is_positive());
+        assert_eq!(duration1.signum(), 1.0);
         assert_eq!(std_duration1, time::Duration::new(300, 0));
         assert_eq!(FloatDuration::from_std(std_duration1), duration1);
 
         let duration2 = FloatDuration::hours(-2.0);
         assert!(duration2.is_negative());
+        assert_eq!(duration2.signum(), -1.0);
         assert!(!duration2.to_std().is_ok());
         let std_duration2 = (-duration2).to_std().unwrap();
         assert_eq!(std_duration2, time::Duration::new(3600 * 2, 0));
@@ -671,6 +678,8 @@ mod tests {
 
         assert_eq!(FloatDuration::zero().to_std().unwrap(),
                    time::Duration::new(0, 0));
+        assert_eq!(FloatDuration::zero().signum(), 1.0);
+        assert!(FloatDuration::zero().is_positive());
         assert!(FloatDuration::nanoseconds(-1.0).to_std().is_err());
         assert!(FloatDuration::max_value().to_std().is_err());
 
