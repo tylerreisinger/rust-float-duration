@@ -475,27 +475,56 @@ impl From<chrono::Duration> for FloatDuration {
 
 impl fmt::Display for FloatDuration {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        if self.secs > SECS_PER_YEAR {
-            write!(fmt, "{} years", self.as_years())
-        } else if self.secs > SECS_PER_DAY {
-            write!(fmt, "{} days", self.as_days())
-        } else if self.secs > SECS_PER_HOUR {
-            write!(fmt, "{} hours", self.as_hours())
-        } else if self.secs > SECS_PER_MINUTE {
-            write!(fmt, "{} minutes", self.as_minutes())
-        } else if self.secs > 1.0 {
-            write!(fmt, "{} seconds", self.as_seconds())
-        } else if self.secs > 1.0e-3 {
-            write!(fmt, "{} milliseconds", self.as_milliseconds())
-        } else if self.secs > 1.0e-6 {
-            write!(fmt, "{} microseconds", self.as_microseconds())
-        } else if self.secs > 1.0e-9 {
-            write!(fmt, "{} nanoseconds", self.as_nanoseconds())
-        } else if self.is_zero() {
-            write!(fmt, "0 seconds")
-        } else {
-            // Here we simply print seconds in scientific notation.
-            write!(fmt, "{:e} seconds", self.as_seconds())
+        let decimals = fmt.precision();
+
+        match decimals {
+            Some(decimals) => {
+                if self.secs > SECS_PER_YEAR {
+                    return write!(fmt, "{:.*} years", decimals, self.as_years());
+                } else if self.secs > SECS_PER_DAY {
+                    return write!(fmt, "{:.*} days", decimals, self.as_days());
+                } else if self.secs > SECS_PER_HOUR {
+                    return write!(fmt, "{:.*} hours", decimals, self.as_hours());
+                } else if self.secs > SECS_PER_MINUTE {
+                    return write!(fmt, "{:.*} minutes", decimals, self.as_minutes());
+                } else if self.secs > 1.0 {
+                    return write!(fmt, "{:.*} seconds", decimals, self.as_seconds());
+                } else if self.secs > 1.0e-3 {
+                    return write!(fmt, "{:.*} milliseconds", decimals, self.as_milliseconds());
+                } else if self.secs > 1.0e-6 {
+                    return write!(fmt, "{:.*} microseconds", decimals, self.as_microseconds());
+                } else if self.secs > 1.0e-9 {
+                    return write!(fmt, "{:.*} nanoseconds", decimals, self.as_nanoseconds());
+                } else if self.is_zero() {
+                    return write!(fmt, "0 seconds");
+                } else {
+                    // Here we simply print seconds in scientific notation.
+                    return write!(fmt, "{:e} seconds", self.as_seconds());
+                }
+            }
+            None => {
+                if self.secs > SECS_PER_YEAR {
+                    return write!(fmt, "{} years", self.as_years());
+                } else if self.secs > SECS_PER_DAY {
+                    return write!(fmt, "{} days", self.as_days());
+                } else if self.secs > SECS_PER_HOUR {
+                    return write!(fmt, "{} hours", self.as_hours());
+                } else if self.secs > SECS_PER_MINUTE {
+                    return write!(fmt, "{} minutes", self.as_minutes());
+                } else if self.secs > 1.0 {
+                    return write!(fmt, "{} seconds", self.as_seconds());
+                } else if self.secs > 1.0e-3 {
+                    return write!(fmt, "{} milliseconds", self.as_milliseconds());
+                } else if self.secs > 1.0e-6 {
+                    return write!(fmt, "{} microseconds", self.as_microseconds());
+                } else if self.secs > 1.0e-9 {
+                    return write!(fmt, "{} nanoseconds", self.as_nanoseconds());
+                } else if self.is_zero() {
+                    return write!(fmt, "0 seconds");
+                } else {
+                    return write!(fmt, "{:e} seconds", self.as_seconds());
+                }
+            }
         }
     }
 }
