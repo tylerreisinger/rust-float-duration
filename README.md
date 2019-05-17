@@ -34,7 +34,7 @@ Put this in your `Cargo.toml`:
 
 ```
 [dependencies]
-float_duration = "0.3.3
+float_duration = "0.3.3"
 ```
 # Overview
 
@@ -124,7 +124,7 @@ use std::time::{Instant, SystemTime};
 
 
 let start_time = Instant::now();
-//Do lengthy operation...
+// Do lengthy operation...
 let end_time = Instant::now();
 
 println!("Took {}.", end_time.float_duration_since(start_time).unwrap());
