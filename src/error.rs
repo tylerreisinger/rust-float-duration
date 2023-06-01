@@ -3,7 +3,7 @@ use std::error::Error;
 use std::fmt;
 
 #[cfg(feature = "chrono")]
-use time;
+use chrono;
 
 #[derive(Debug, Clone, Default)]
 pub struct OutOfRangeError {}
@@ -27,8 +27,8 @@ impl fmt::Display for OutOfRangeError {
 }
 
 #[cfg(feature = "chrono")]
-impl From<time::OutOfRangeError> for OutOfRangeError {
-    fn from(_: time::OutOfRangeError) -> OutOfRangeError {
+impl From<chrono::OutOfRangeError> for OutOfRangeError {
+    fn from(_: chrono::OutOfRangeError) -> OutOfRangeError {
         OutOfRangeError {}
     }
 }
